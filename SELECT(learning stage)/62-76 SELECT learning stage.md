@@ -153,7 +153,20 @@ ORDER BY point, day
 Укажите сражения, в которых участвовало по меньшей мере три корабля одной и той же страны.
 
 ```sql
-
+SELECT DISTINCT battle
+FROM (
+    SELECT o.battle, c.country, o.ship
+    FROM Battles b
+    JOIN Outcomes o ON b.name = o.battle
+    JOIN Ships s ON s.name = o.ship
+    JOIN Classes c ON c.class = s.class
+    UNION
+    SELECT o.battle, c.country, o.ship
+    FROM Battles b
+    JOIN Outcomes o ON b.name = o.battle
+    JOIN Classes c ON c.class = o.ship) a
+GROUP BY battle, country
+HAVING count(DISTINCT ship) >= 3
 ```
 
 ## 71
